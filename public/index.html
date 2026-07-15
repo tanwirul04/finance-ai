@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warung Pintar AI — Analisis Keuangan UMKM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">WP</span>
+      <div>
+        <div class="brand-name">Warung Pintar AI</div>
+        <div class="brand-sub">Tim agent analisis keuangan untuk usaha kecil</div>
+      </div>
+    </div>
+    <div class="agent-pills" aria-hidden="true">
+      <span class="pill">Analis</span>
+      <span class="pill">Prediktor</span>
+      <span class="pill">Detektor risiko</span>
+      <span class="pill">Advisor</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="intro">
+    <h1>Foto nota, atau catat manual. Biarkan tim AI yang menganalisis.</h1>
+    <p>Warung Pintar AI membaca transaksi usahamu, lalu empat agent bekerja sama menghitung kesehatan keuangan, memprediksi arus kas, mendeteksi transaksi janggal, dan memberi rekomendasi dalam bahasa yang mudah dimengerti.</p>
+  </section>
+
+  <section class="panel input-panel">
+    <div class="panel-head">
+      <h2>1. Masukkan data transaksi</h2>
+      <button id="sampleBtn" class="btn ghost">Pakai contoh data</button>
+    </div>
+
+    <div class="input-row">
+      <div class="upload-box">
+        <label class="upload-label" for="photoInput">
+          <span class="upload-title">Foto nota, PDF, atau Excel/CSV</span>
+          <span class="upload-hint">Agent ekstraksi otomatis membaca file ini jadi transaksi</span>
+        </label>
+        <input type="file" id="photoInput" accept="image/*,.pdf,.xlsx,.xls,.csv" hidden>
+        <div id="uploadStatus" class="upload-status"></div>
+      </div>
+
+      <form id="manualForm" class="manual-form">
+        <span class="upload-title" style="display:block;margin-bottom:8px;">Atau catat manual</span>
+        <div class="manual-grid">
+          <input type="text" id="deskripsi" placeholder="Deskripsi (mis. jual nasi goreng)" required>
+          <input type="number" id="jumlah" placeholder="Jumlah (Rp)" required min="0">
+          <select id="tipe">
+            <option value="pemasukan">Pemasukan</option>
+            <option value="pengeluaran">Pengeluaran</option>
+          </select>
+          <button type="submit" class="btn primary">Tambah</button>
+        </div>
+      </form>
+    </div>
+
+    <table class="tx-table" id="txTable">
+      <thead>
+        <tr><th>Deskripsi</th><th>Tipe</th><th>Jumlah</th><th></th></tr>
+      </thead>
+      <tbody id="txBody">
+        <tr class="empty-row"><td colspan="4">Belum ada transaksi. Tambahkan manual atau unggah foto nota.</td></tr>
+      </tbody>
+    </table>
+
+    <button id="analyzeBtn" class="btn primary big" disabled>Analisis dengan AI</button>
+  </section>
+
+  <section class="panel results-panel" id="resultsPanel" hidden>
+    <h2>2. Hasil analisis tim AI</h2>
+
+    <div class="summary-grid">
+      <div class="card">
+        <div class="card-icon icon-up"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></div>
+        <div class="card-label">Total pemasukan</div>
+        <div class="card-value mono" id="sumMasuk">Rp 0</div>
+        <div class="card-sub">Semua pemasukan</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-down"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></div>
+        <div class="card-label">Total pengeluaran</div>
+        <div class="card-value mono" id="sumKeluar">Rp 0</div>
+        <div class="card-sub">Semua pengeluaran</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-coin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M9 10.5c0-1 1-1.5 3-1.5s3 .8 3 1.8-1 1.7-3 1.7-3 .7-3 1.7 1 1.8 3 1.8 3-.5 3-1.5"/></svg></div>
+        <div class="card-label">Laba bersih</div>
+        <div class="card-value mono" id="sumLaba">Rp 0</div>
+        <div class="card-sub">Pemasukan − pengeluaran</div>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-ratio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9z" fill="currentColor" stroke="none"/></svg></div>
+        <div class="card-label">Rasio laba</div>
+        <div class="card-value mono" id="marginLaba">0%</div>
+        <div class="card-sub">Laba bersih / pemasukan</div>
+      </div>
+    </div>
+
+    <div class="score-block">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120" width="120" height="120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="10"/>
+          <circle id="scoreArc" cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="score-number" id="scoreNumber">0</div>
+      </div>
+      <div class="score-text">
+        <div class="score-title">Skor kesehatan keuangan</div>
+        <p id="scoreExplain">Belum dianalisis.</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+    <div class="chart-box">
+      <h3>Komposisi pemasukan vs pengeluaran</h3>
+      <canvas id="compositionChart" height="220"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Tren saldo kas per transaksi</h3>
+      <canvas id="trendChart" height="180"></canvas>
+      <div id="cashflowText" class="prediksi-text"></div>
+    </div>
+  </div>
+
+    <div class="two-col">
+      <div>
+        <h3>Insight bisnis</h3>
+        <ul class="insight-list" id="insightList"></ul>
+      </div>
+      <div>
+        <h3>Rekomendasi & tindakan</h3>
+        <ul class="recommend-list" id="recommendList"></ul>
+      </div>
+    </div>
+
+    <div class="anomaly-block">
+      <h3>Deteksi risiko</h3>
+      <div id="anomalyList" class="anomaly-list"></div>
+    </div>
+  </section>
+
+  <section class="panel chat-panel">
+    <h2>3. Tanya AI</h2>
+    <p class="chat-hint">Tanya apa saja soal data keuanganmu, misalnya "kenapa laba bulan ini kecil?" atau "mana pengeluaran paling boros?"</p>
+    <div class="chat-log" id="chatLog"></div>
+    <form id="chatForm" class="chat-form">
+      <input type="text" id="chatInput" placeholder="Tulis pertanyaanmu di sini..." autocomplete="off" required>
+      <button type="submit" class="btn primary">Tanya</button>
+    </form>
+  </section>
+
+</main>
+
+<script src="/vendor/chartjs/chart.umd.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
